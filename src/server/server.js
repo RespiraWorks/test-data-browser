@@ -1,0 +1,36 @@
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const fileUpload = require('express-fileupload');
+
+const port = process.env.PORT || 8080;
+
+require('dotenv').config();
+
+const app = express();
+
+const cors = require('cors');
+// allow other domains to access this server
+app.use(cors());
+app.use(fileUpload({
+  createParentPath: true
+}));
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.resolve('dist')));
+
+const mongoRouter = require('./routes');
+
+app.use('/dbaccess', mongoRouter);
+
+// TODO: proper error handlers
+
+app.get('*', (req, res) => res.sendFile(path.resolve('dist/index.html')));
+
+app.listen(port, () => console.log(`Listening on port ${port}!`));
+
+module.exports = app;
