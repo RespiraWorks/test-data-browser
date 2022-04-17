@@ -2,12 +2,12 @@
   "name": "respiraworks-test-data-browser",
   "version": "0.1.0",
   "description": "RespiraWorks ventilator test data management platform",
-  "main": "src/server/app.js",
+  "main": "src/server/server_app.js",
   "scripts": {
     "build": "webpack --mode production",
-    "start": "npm run build && node src/server/app.js",
+    "start": "npm run build && node src/server/server_app.js",
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
-    "server": "nodemon src/server/app.js",
+    "server": "nodemon src/server/server_app.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "RespiraWorks",

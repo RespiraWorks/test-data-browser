@@ -2,7 +2,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import React, { Component } from 'react';
 import DataFileTable from './data-file-table';
 import UploadFile from './upload-file';
-import './App.scss';
+import './app.scss';
+import './old_app.css';
 
 export default class App extends Component {
   state = { username: null };
