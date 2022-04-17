@@ -20,31 +20,31 @@ module.exports = {
         }
       ]
     },
-      {
-        test: /\.(css|sass|scss)$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader'
-          },
-          {
-            loader: 'sass-loader'
+    {
+      test: /\.(css|sass|scss)$/,
+      use: [
+        {
+          loader: 'style-loader'
+        },
+        {
+          loader: 'css-loader'
+        },
+        {
+          loader: 'sass-loader'
+        }
+      ]
+    },
+    {
+      test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+      use: [
+        {
+          loader: 'url-loader',
+          options: {
+            limit: 100000
           }
-        ]
-      },
-      {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 100000
-            }
-          }
-        ]
-      }
+        }
+      ]
+    }
     ]
   },
   resolve: {

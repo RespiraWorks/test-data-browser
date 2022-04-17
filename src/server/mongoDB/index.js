@@ -34,7 +34,7 @@ const grabAllFileNames = async () => connection.then(async () => {
 
 const getFile = async (filename) => connection.then(async () => {
   const dbo = client.db(databaseName);
-  return await dbo.collection(collectionName).findOne({ filename });
+  return dbo.collection(collectionName).findOne({ filename });
 });
 
 const uploadFile = async (file, filename) => {
@@ -42,7 +42,7 @@ const uploadFile = async (file, filename) => {
   return connection.then(async () => {
     const dbo = client.db(databaseName);
     console.log(typeof file);
-    return await dbo.collection(collectionName).insertOne({
+    return dbo.collection(collectionName).insertOne({
       ...file,
       newerFormat: true,
       // if there is a filename set in the file use that as default to whatever the upload name was

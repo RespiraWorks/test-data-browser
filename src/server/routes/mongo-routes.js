@@ -42,12 +42,12 @@ router.post('/upload-file', async (req, res) => {
       res.send({
         status: false,
         message: 'No files'
-      })
+      });
     } else {
       const { file } = req.files;
 
       if (file.name.split('.')[1] === 'json') {
-        const stringOfData = file.data.toString('utf8'); // convert our buffer into a readable string
+        const stringOfData = file.data.toString(); // convert our buffer into a readable string
         const jsonData = JSON.parse(stringOfData); // convert our string into JSON
         const upload = await mongoConnection.uploadFile(jsonData, file.name);
         console.log(upload);
@@ -57,7 +57,7 @@ router.post('/upload-file', async (req, res) => {
           message: 'JSON is uploaded to the database'
         });
       } else {
-        file.mv(`./images/${file.name}`);
+        await file.mv(`./images/${file.name}`);
 
         res.send({
           status: true,
@@ -66,7 +66,7 @@ router.post('/upload-file', async (req, res) => {
       }
     }
   } catch (e) {
-    res.status(500).send(e)
+    res.status(500).send(e);
   }
 });
 
