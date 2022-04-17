@@ -2,10 +2,6 @@ const express = require('express');
 const mongoConnection = require('./database');
 
 const router = express.Router();
-// let multer  = require('multer')
-// let upload = multer({ dest: 'uploads/' })
-// const fs = require('fs');
-// const path = require('path');
 
 // test-route/test-route
 router.get('/file-names', async (req, res) => {
