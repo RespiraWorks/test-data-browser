@@ -7,10 +7,6 @@ const fileUpload = require('express-fileupload');
 
 require('dotenv').config();
 
-// var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/users');
-const mongoRouter = require('./routes/mongo-routes');
-
 const app = express();
 
 const cors = require('cors');
@@ -29,6 +25,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// const indexRouter = require('./routes/index');
+// const usersRouter = require('./routes/users');
+const mongoRouter = require('./routes/mongo-routes');
 
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);
@@ -55,8 +55,12 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-// This way you do not need to specify which port to run the command on PORT=8080 npm start can now be npm start (in case you want to start the backend and front-end separate)
-// Also makes our code work with Docker (could expose any port, but when you run docker run -p 5000:$port $dockerImage where $port is 8080)
+/**
+ * This way you do not need to specify which port to run the command on PORT=8080 npm start can now
+ * be npm start (in case you want to start the backend and front-end separate). Also makes our code
+ * work with Docker (could expose any port, but when you run docker run -p 5000:$port $dockerImage
+ * where $port is 8080)
+ */
 const port = 8080;
 
 app.listen(port, () => console.log(`app listening on http://localhost:${port}`));
