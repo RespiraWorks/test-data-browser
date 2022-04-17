@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver';
 import React, { useEffect, useState } from 'react';
-import { getFileNames, downloadFile } from '../services/index';
-import './index.css';
+import { getFileNames, downloadFile } from '../api';
+import './data-file-table.css';
 
 import 'font-awesome/css/font-awesome.min.css';
 

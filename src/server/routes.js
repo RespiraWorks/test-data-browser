@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoConnection = require('../mongoDB/index');
+const mongoConnection = require('./database');
 
 const router = express.Router();
 // let multer  = require('multer')

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { uploadFile } from '../services/index';
+import { uploadFile } from '../api';
 
 const ImportFile = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -30,7 +30,7 @@ const ImportFile = (props) => {
 
       <div>
         {/* Change to application/json */}
-        <input type="file" onChange={onFileChange} accept="application/json"/>
+        <input type="file" onChange={onFileChange} accept="application/json" />
         <button onClick={onFileUpload}>
           Upload!
         </button>
