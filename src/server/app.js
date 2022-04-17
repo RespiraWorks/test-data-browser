@@ -1,9 +1,9 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-const fileUpload = require("express-fileupload");
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const fileUpload = require('express-fileupload');
 
 require('dotenv').config();
 
@@ -13,7 +13,8 @@ const mongoRouter = require('./routes/mongo-routes');
 
 const app = express();
 
-const cors = require('cors'); // allow other domains to access this server
+const cors = require('cors');
+// allow other domains to access this server
 app.use(cors());
 app.use(fileUpload({
   createParentPath: true
@@ -21,7 +22,7 @@ app.use(fileUpload({
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -36,15 +37,15 @@ app.use('/get-mongo-data', mongoRouter);
 app.use(express.static(path.join(__dirname, 'client', 'app1', 'build'))); // add the build folder
 
 // all other requests serve client!
-app.use("*", express.static(path.join(__dirname, 'client', 'app1', 'build')));
+app.use('*', express.static(path.join(__dirname, 'client', 'app1', 'build')));
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
