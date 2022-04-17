@@ -4,7 +4,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const fileUpload = require('express-fileupload');
-const os = require('os');
 
 require('dotenv').config();
 
@@ -47,10 +46,6 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error');
 });
-
-// from boilerplate for texting TODO: remove this
-app.use(express.static('dist'));
-app.get('/api/getUsername', (req, res) => res.send({ username: os.userInfo().username }));
 
 /**
  * This way you do not need to specify which port to run the command on PORT=8080 npm start can now

@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { getFileNames, downloadFile } from '../api';
 import './data-file-table.css';
 
-import 'font-awesome/css/font-awesome.min.css';
-
 function DataFileTable(props) {
   const [loadedFileNames, setLoadedFileNames] = useState(false);
   const [files, setFiles] = useState([]);
