@@ -33,7 +33,7 @@ const uploadFile = async (file, filename) => {
     method: 'POST',
     body: formData,
     crossDomain: true,
-  }).then((res) => res.json());
+  }).then((r) => r.json());
   alert(JSON.stringify(res));
 };
 

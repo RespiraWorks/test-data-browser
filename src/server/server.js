@@ -27,7 +27,8 @@ app.use('/get-mongo-data', mongoRouter);
 
 // TODO: proper error handlers
 
-app.use(express.static('dist'));
+app.get('*', (req, res) => res.sendFile(path.resolve('dist')));
+
 app.listen(process.env.PORT || 8080, () => console.log(`Listening on port ${process.env.PORT || 8080}!`));
 
 module.exports = app;
