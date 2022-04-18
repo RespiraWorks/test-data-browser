@@ -2,11 +2,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import React from 'react';
 import DataFileTable from './pages/data-file-table';
 import UploadFile from './pages/upload-file';
+import Title from './pages/header';
 
 export default function App() {
   return (
     <div>
-      <h1>RespiraWorks experimental data portal</h1>
+      <Title />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<DataFileTable />} />
