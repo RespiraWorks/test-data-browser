@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { uploadFile } from '../api';
 
-const ImportFile = (props) => {
+function ImportFile() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFilename, setSelectedFilename] = useState(null);
 
@@ -15,6 +15,7 @@ const ImportFile = (props) => {
     setSelectedFile(file);
   };
 
+  // TODO: after uploading go to page confirming receipt and/or page for examining/viewing data
   const onFileUpload = () => {
     if (selectedFile === null) {
       return;
@@ -25,7 +26,6 @@ const ImportFile = (props) => {
   return (
     <div>
       <h2>Upload a file!!</h2>
-
       <div>
         <input type="file" onChange={onFileChange} accept="application/json" />
         <button
@@ -37,6 +37,6 @@ const ImportFile = (props) => {
       </div>
     </div>
   );
-};
+}
 
 export default ImportFile;

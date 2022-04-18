@@ -6,7 +6,7 @@ import UploadFile from './pages/upload-file';
 export default function App() {
   return (
     <div>
-      <h1 style={{ display: 'none' }}>RespiraWorks</h1>
+      <h1>RespiraWorks experimental data portal</h1>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<DataFileTable />} />

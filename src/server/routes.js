@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get('/get-test-table-data', async (req, res) => {
   const tableData = await mongoConnection.grabMetadata();
-
   res.send({
     msg: 'Worked!',
     tableData,
@@ -16,6 +15,7 @@ router.get('/get-test-table-data', async (req, res) => {
 router.get('/get-experiment-data', async (req, res) => {
   const { uniqueId } = req.query;
   const dataSet = await mongoConnection.getFullExperimentData(uniqueId);
+  // TODO: does this need a failed/succeeded response?
   res.send({
     ...dataSet,
   });

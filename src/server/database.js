@@ -8,6 +8,7 @@ const collectionName = 'dataFiles';
 
 let client; let connection;
 
+// TODO: follow proper OOP patterns, make this database a persistent object
 const connectToDb = (function () {
   client = new MongoClient(url, { useUnifiedTopology: true });
   connection = client.connect();
@@ -21,6 +22,7 @@ const testConnectToMongo = () => connection.then(() => {
   });
 });
 
+// TODO: make querying more flexible, return various fields
 const grabMetadata = async () => connection.then(async () => {
   const dbo = client.db(databaseName);
   const retData = [];
@@ -44,15 +46,13 @@ const getFullExperimentData = async (uniqueId) => connection.then(async () => {
   return dbo.collection(collectionName).findOne(query);
 });
 
-const uploadExperiment = async (data, uniqueId) => {
-  return connection.then(async () => {
-    const dbo = client.db(databaseName);
-    return dbo.collection(collectionName).insertOne({
-      unique_id: uniqueId,
-      ...data,
-    });
+const uploadExperiment = async (data, uniqueId) => connection.then(async () => {
+  const dbo = client.db(databaseName);
+  return dbo.collection(collectionName).insertOne({
+    unique_id: uniqueId,
+    ...data,
   });
-};
+});
 
 module.exports = {
   client,

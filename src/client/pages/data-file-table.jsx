@@ -4,7 +4,7 @@ import dateFormat from 'dateformat';
 import { downloadFile, getTableData } from '../api';
 import './data-file-table.css';
 
-function DataFileTable(props) {
+function DataFileTable() {
   const [loadedFileNames, setLoadedFileNames] = useState(false);
   const [experiments, setExperiments] = useState([]);
 
@@ -17,6 +17,7 @@ function DataFileTable(props) {
     fetchData();
   }, []);
 
+  // TODO: move this function and buttons to separate page dedicated to examining specific dataset
   const createFile = async (uniqueId, json = true) => {
     const resp = await downloadFile(uniqueId);
 
@@ -28,7 +29,7 @@ function DataFileTable(props) {
     let fileToSave = null;
 
     if (json) {
-      fileToSave = new Blob([JSON.stringify(dataSet)], {
+      fileToSave = new Blob([JSON.stringify(dataSet, null, 4)], {
         type: 'application/json'
       });
     } else {
@@ -97,7 +98,7 @@ function DataFileTable(props) {
   return (
     <div>
       <div className="container max-width-1000 mb-4">
-        <h2 className="mt-4">RespiraWorks experimental data archive</h2>
+        <h2 className="mt-4">Uploaded datasets</h2>
         {loadedFileNames ? experimentsTable : <center><i className="fa fa-spinner fa-spin fa-5x mt-5" /></center>}
       </div>
     </div>
