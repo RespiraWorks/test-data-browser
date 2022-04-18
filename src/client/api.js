@@ -2,8 +2,8 @@ import axios from 'axios';
 
 const url = window.location.host === 'localhost:3000' ? 'http://localhost:8080' : '';
 
-const getFileNames = async () => {
-  const route = `${url}/get-mongo-data/file-names`;
+const getTableData = async () => {
+  const route = `${url}/dbaccess/get-test-table-data`;
   return axios({
     method: 'GET',
     url: route,
@@ -12,7 +12,7 @@ const getFileNames = async () => {
 };
 
 const downloadFile = async (fileName) => {
-  const route = `${url}/get-mongo-data/download-file?fileName=${fileName}`;
+  const route = `${url}/dbaccess/download-file?fileName=${fileName}`;
   return axios({
     method: 'GET',
     url: route,
@@ -24,7 +24,7 @@ const downloadFile = async (fileName) => {
 };
 
 const uploadFile = async (file, filename) => {
-  const route = `${url}/get-mongo-data/upload-file`;
+  const route = `${url}/dbaccess/upload-file`;
 
   const formData = new FormData();
   formData.append('file', file);
@@ -38,7 +38,7 @@ const uploadFile = async (file, filename) => {
 };
 
 export {
-  getFileNames,
+  getTableData,
   downloadFile,
   uploadFile,
 };

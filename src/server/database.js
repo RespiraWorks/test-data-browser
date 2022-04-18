@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 
 const url = process.env.LOCAL_DB === 'true'
   ? 'mongodb://mongo-db:27017' : process.env.MONGODB_URL
-    || 'mongodb+srv://respiraWorks:S5u7t5yOmomK0x9j@cluster0.7yqbv.mongodb.net/sampleData?retryWrites=true&w=majority';
+    || 'mongodb+srv://mgs:KsUYuHidZN9PtGDcC1nV@pizzaiolo.wrvah.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 const databaseName = 'sampleData';
 const collectionName = 'dataFiles';
 
@@ -21,15 +21,21 @@ const testConnectToMongo = () => connection.then(() => {
   });
 });
 
-const grabAllFileNames = async () => connection.then(async () => {
+const grabSomeData = async () => connection.then(async () => {
   const dbo = client.db(databaseName);
-  const fileNameArr = [];
-  await dbo.collection(collectionName).find({ newerFormat: true }).forEach(
+  const retData = [];
+  await dbo.collection(collectionName).find().forEach(
     (e) => {
-      fileNameArr.push(e.filename);
+      const e2 = {
+        filename: e.filename,
+        time: e.start_time_utc,
+        tester_name: e.tester_name,
+        scenario: e.scenario.name
+      };
+      retData.push(e2);
     }
   );
-  return fileNameArr;
+  return retData;
 });
 
 const getFile = async (filename) => connection.then(async () => {
@@ -44,7 +50,6 @@ const uploadFile = async (file, filename) => {
     console.log(typeof file);
     return dbo.collection(collectionName).insertOne({
       ...file,
-      newerFormat: true,
       // if there is a filename set in the file use that as default to whatever the upload name was
       filename: file.filename ?? filename,
     });
@@ -55,7 +60,7 @@ module.exports = {
   client,
   connection,
   testConnectToMongo,
-  grabAllFileNames,
+  grabSomeData,
   getFile,
   uploadFile,
 };

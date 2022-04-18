@@ -3,13 +3,12 @@ const mongoConnection = require('./database');
 
 const router = express.Router();
 
-// test-route/test-route
-router.get('/file-names', async (req, res) => {
-  const fileNames = await mongoConnection.grabAllFileNames();
+router.get('/get-test-table-data', async (req, res) => {
+  const tableData = await mongoConnection.grabSomeData();
 
   res.send({
     msg: 'Worked!',
-    fileNames,
+    tableData,
   });
 });
 

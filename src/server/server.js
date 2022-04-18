@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const mongoRouter = require('./routes');
 
-app.use('/get-mongo-data', mongoRouter);
+app.use('/dbaccess', mongoRouter);
 
 // TODO: proper error handlers
 
