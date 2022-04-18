@@ -21,13 +21,13 @@ const testConnectToMongo = () => connection.then(() => {
   });
 });
 
-const grabSomeData = async () => connection.then(async () => {
+const grabMetadata = async () => connection.then(async () => {
   const dbo = client.db(databaseName);
   const retData = [];
   await dbo.collection(collectionName).find().forEach(
     (e) => {
       const e2 = {
-        filename: e.filename,
+        unique_id: e.unique_id,
         time: e.start_time_utc,
         tester_name: e.tester_name,
         scenario: e.scenario.name
@@ -38,20 +38,18 @@ const grabSomeData = async () => connection.then(async () => {
   return retData;
 });
 
-const getFile = async (filename) => connection.then(async () => {
+const getFullExperimentData = async (uniqueId) => connection.then(async () => {
   const dbo = client.db(databaseName);
-  return dbo.collection(collectionName).findOne({ filename });
+  const query = { unique_id: uniqueId };
+  return dbo.collection(collectionName).findOne(query);
 });
 
-const uploadFile = async (file, filename) => {
-  console.log(file.filename);
+const uploadExperiment = async (data, uniqueId) => {
   return connection.then(async () => {
     const dbo = client.db(databaseName);
-    console.log(typeof file);
     return dbo.collection(collectionName).insertOne({
-      ...file,
-      // if there is a filename set in the file use that as default to whatever the upload name was
-      filename: file.filename ?? filename,
+      unique_id: uniqueId,
+      ...data,
     });
   });
 };
@@ -60,7 +58,7 @@ module.exports = {
   client,
   connection,
   testConnectToMongo,
-  grabSomeData,
-  getFile,
-  uploadFile,
+  grabMetadata,
+  getFullExperimentData,
+  uploadExperiment,
 };

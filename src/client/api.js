@@ -11,19 +11,19 @@ const getTableData = async () => {
   });
 };
 
-const downloadFile = async (fileName) => {
-  const route = `${url}/dbaccess/download-file?fileName=${fileName}`;
+const downloadFile = async (uniqueId) => {
+  const route = `${url}/dbaccess/get-experiment-data?uniqueId=${uniqueId}`;
   return axios({
     method: 'GET',
     url: route,
     crossDomain: true,
     data: {
-      fileName,
+      uniqueId,
     }
   });
 };
 
-const uploadFile = async (file, filename) => {
+const uploadFile = async (file) => {
   const route = `${url}/dbaccess/upload-file`;
 
   const formData = new FormData();

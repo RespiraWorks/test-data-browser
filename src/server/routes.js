@@ -1,10 +1,11 @@
 const express = require('express');
+const path = require('path');
 const mongoConnection = require('./database');
 
 const router = express.Router();
 
 router.get('/get-test-table-data', async (req, res) => {
-  const tableData = await mongoConnection.grabSomeData();
+  const tableData = await mongoConnection.grabMetadata();
 
   res.send({
     msg: 'Worked!',
@@ -12,22 +13,11 @@ router.get('/get-test-table-data', async (req, res) => {
   });
 });
 
-router.get('/download-file', async (req, res) => {
-  const { fileName } = req.query;
-  const file = await mongoConnection.getFile(fileName);
-
+router.get('/get-experiment-data', async (req, res) => {
+  const { uniqueId } = req.query;
+  const dataSet = await mongoConnection.getFullExperimentData(uniqueId);
   res.send({
-    msg: 'Worked!',
-    file,
-  });
-});
-
-router.get('/get-file', async (req, res) => {
-  const { fileName } = req.query;
-  const file = await mongoConnection.getFile(fileName);
-
-  res.send({
-    ...file,
+    ...dataSet,
   });
 });
 
@@ -40,23 +30,19 @@ router.post('/upload-file', async (req, res) => {
       });
     } else {
       const { file } = req.files;
-
-      if (file.name.split('.')[1] === 'json') {
-        const stringOfData = file.data.toString(); // convert our buffer into a readable string
-        const jsonData = JSON.parse(stringOfData); // convert our string into JSON
-        const upload = await mongoConnection.uploadFile(jsonData, file.name);
-        console.log(upload);
-
+      const filePath = path.parse(file.name);
+      if (filePath.ext === '.json') {
+        const jsonData = JSON.parse(file.data.toString());
+        const upload = await mongoConnection.uploadExperiment(jsonData, filePath.name);
+        console.log(`Ingested file: ${file.name}:`, file, upload);
         res.send({
           status: true,
-          message: 'JSON is uploaded to the database'
+          message: 'Experiment was uploaded to the database'
         });
       } else {
-        await file.mv(`./images/${file.name}`);
-
         res.send({
-          status: true,
-          message: 'Image is uploaded to server'
+          status: false,
+          message: 'Bad file type'
         });
       }
     }

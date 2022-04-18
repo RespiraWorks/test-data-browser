@@ -19,9 +19,7 @@ const ImportFile = (props) => {
     if (selectedFile === null) {
       return;
     }
-
-    console.log('Uploading!', selectedFile, selectedFilename);
-    uploadFile(selectedFile, selectedFilename);
+    uploadFile(selectedFile);
   };
 
   return (
@@ -29,9 +27,11 @@ const ImportFile = (props) => {
       <h2>Upload a file!!</h2>
 
       <div>
-        {/* Change to application/json */}
         <input type="file" onChange={onFileChange} accept="application/json" />
-        <button onClick={onFileUpload}>
+        <button
+          type="button"
+          onClick={onFileUpload}
+        >
           Upload!
         </button>
       </div>
