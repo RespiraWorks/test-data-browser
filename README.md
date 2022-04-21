@@ -5,9 +5,16 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/RespiraWorks/test-data-browser)](https://github.com/RespiraWorks/test-data-browser/pulse)
 [![Donate](https://img.shields.io/badge/donate-gofundme-blueviolet)](https://www.gofundme.com/f/RespiraWorks)
 
-This is the full implementation for RW's ventilator test data management solution currently provided at
+This is the full stack implementation for the RespiraWorks
+[ventilator](https://github.com/RespiraWorks/Ventilator)
+test data management system currently provided at
 [http://data.respira.works/](http://data.respira.works/).
 It is made with javascript, react, express and react-bootstrap. Data is stored in MongoDB.
+
+[RespiraWorks](https://respira.works/) is a 501(c)(3) non-profit organization with over 200
+contributors worldwide working to design a low-cost and open-source ventilator for communities
+underserved by the global supply chain. Our objective is to provide the know-how and technology to
+enable others to manufacture these systems and put them in the hands of those who need them most.
 
 ## Getting started
 
