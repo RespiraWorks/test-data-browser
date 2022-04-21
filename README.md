@@ -1,5 +1,10 @@
 # RespiraWorks test data management system
 
+[![CircleCI Build Status](https://circleci.com/gh/RespiraWorks/test-data-browser.svg?style=shield)](https://circleci.com/gh/RespiraWorks/test-data-browser/tree/master)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/RespiraWorks/test-data-browser)](https://github.com/RespiraWorks/test-data-browser/pulse)
+[![Donate](https://img.shields.io/badge/donate-gofundme-blueviolet)](https://www.gofundme.com/f/RespiraWorks)
+
 This is the full implementation for RW's ventilator test data management solution currently provided at
 [http://data.respira.works/](http://data.respira.works/).
 It is made with javascript, react, express and react-bootstrap. Data is stored in MongoDB.
