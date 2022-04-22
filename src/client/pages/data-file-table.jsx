@@ -1,6 +1,7 @@
 import { saveAs } from 'file-saver';
 import React, { useEffect, useState } from 'react';
 import dateFormat from 'dateformat';
+import { Spinner } from 'react-bootstrap';
 import { downloadFile, getTableData } from '../api';
 import './data-file-table.css';
 
@@ -96,9 +97,9 @@ function DataFileTable() {
   ));
 
   return (
-      <div className="container max-width-1000 mb-4">
-        {loadedFileNames ? experimentsTable : <center><i className="fa fa-spinner fa-spin fa-5x mt-5" /></center>}
-      </div>
+    <div className="container max-width-1000 mb-4">
+      {loadedFileNames ? experimentsTable : <Spinner animation="border" variant="primary" />}
+    </div>
   );
 }
 
