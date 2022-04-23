@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom'
-import { Button, Spinner } from 'react-bootstrap';
+import { useSearchParams } from 'react-router-dom';
+import { Button, Spinner, Table } from 'react-bootstrap';
 import dateFormat from 'dateformat';
 import { saveAs } from 'file-saver';
 import { downloadFile } from '../api';
@@ -47,80 +47,65 @@ function DataSet() {
 
   function summary() {
     return (
-      <div className="">
-        <div className="row border">
-          <p className="col-2 my-auto">
-            <strong>Test ID</strong>
-          </p>
-          <p className="col-5 my-auto">
-            <strong>{dataSet.unique_id}</strong>
-          </p>
-        </div>
-        <div className="row border">
-          <p className="col-2 my-auto">
-            Scenario
-          </p>
-          <p className="col-5 my-auto">
-            {dataSet.scenario.description}
-          </p>
-        </div>
-        <div className="row border">
-          <p className="col-2 my-auto">
-            Machine serial No.
-          </p>
-          <p className="col-5 my-auto">
-            {dataSet.ventilator_settings['0_ventilator_serial_number']}
-          </p>
-        </div>
-        <div className="row border">
-          <p className="col-2 my-auto">
-            Data & time
-          </p>
-          <p className="col-5 my-auto">
-            { dateFormat(new Date(dataSet.start_time_utc.concat('Z')), 'UTC:yyyy-mm-dd  HH:MM:ss') }
-          </p>
-        </div>
-        <div className="row border">
-          <p className="col-2 my-auto">
-            Git version
-          </p>
-          <p className="col-5 my-auto">
-            { dataSet.git_version }
-          </p>
-        </div>
-        <div className="row border">
-          <p className="col-2 my-auto">
-            Download as JSON
-          </p>
-          <p className="col-5 my-auto">
-            <Button variant="dark" onClick={() => createFile(true)}>
-              Download as JSON
-            </Button>
-          </p>
-        </div>
-        <div className="row border">
-          <p className="col-2 my-auto">
-            Visualization
-          </p>
-          <p className="col-5 my-auto">
-            <Button
-              variant="link"
-              as="a"
-              href={`http://ventmon.coslabs.com/breath_plot?raworks=https://data.respira.works/dbaccess/get-experiment-data?uniqueId=${dataSet.unique_id}` }
-            >
-              vent-display
-            </Button>
-          </p>
-        </div>
-      </div>
+      <Table striped bordered size="sm">
+        <tbody>
+          <tr>
+            <td><strong>Test ID</strong></td>
+            <td><strong>{dataSet.unique_id}</strong></td>
+          </tr>
+          <tr>
+            <td>Scenario</td>
+            <td>{dataSet.scenario.description}</td>
+          </tr>
+          <tr>
+            <td>Ventilator serial no.</td>
+            <td>{dataSet.ventilator_settings['0_ventilator_serial_number']}</td>
+          </tr>
+          <tr>
+            <td>Date & time</td>
+            <td>
+              { dateFormat(
+                new Date(dataSet.start_time_utc.concat('Z')),
+                'UTC:yyyy-mm-dd  HH:MM:ss'
+              ) }
+            </td>
+          </tr>
+          <tr>
+            <td>Git version</td>
+            <td>{ dataSet.git_version }</td>
+          </tr>
+          <tr>
+            <td>Download</td>
+            <td>
+              <Button
+                variant="link"
+                onClick={() => createFile(true)}
+              >
+                JSON
+              </Button>
+            </td>
+          </tr>
+          <tr>
+            <td>Visualization</td>
+            <td>
+              <Button
+                variant="link"
+                as="a"
+                href={`http://ventmon.coslabs.com/breath_plot?raworks=https://data.respira.works/dbaccess/get-experiment-data?uniqueId=${dataSet.unique_id}`}
+              >
+                vent-display
+              </Button>
+            </td>
+          </tr>
+        </tbody>
+      </Table>
     );
   }
 
   function scenarioInfo() {
     return (
       <div>
-        <p>
-        </p>
+        <p />
       </div>
     );
   }
@@ -136,7 +121,9 @@ function DataSet() {
 
   return (
     <div style={{ maxWidth: '800px' }}>
-      <center>{loadedDataSet ? displayDataSet() : <Spinner animation="border" variant="primary" />}</center>
+      {loadedDataSet
+        ? displayDataSet()
+        : <Spinner animation="border" variant="primary" size="xl" />}
     </div>
   );
 }

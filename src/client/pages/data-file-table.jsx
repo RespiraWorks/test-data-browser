@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import dateFormat from 'dateformat';
-import { Button, Spinner } from 'react-bootstrap';
-import { downloadFile, getTableData } from '../api';
+import { Container, Spinner, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { downloadFile, getTableData } from '../api';
 
 function DataFileTable() {
   const [loadedFileNames, setLoadedFileNames] = useState(false);
@@ -18,52 +18,49 @@ function DataFileTable() {
   }, []);
 
   const experimentsTable = experiments.map((experiment, index) => (
-    <div className="" key={index}>
-      { index === 0
-        ? (
-          <div className="row border mt-5">
-            <p className="col-3 mt-3">
-              <strong>Time (UTC)</strong>
-            </p>
-            <p className="col-2 my-auto">
-              <i className="fa mt-3" />
-              <strong>Scenario</strong>
-            </p>
-            <p className="col-2 my-auto">
-              <i className="fa mt-3" />
-              <strong>Tester</strong>
-            </p>
-            <p className="col-2 my-auto">
-              <i className="fa fa-open" />
-              <strong>Open</strong>
-            </p>
-          </div>
-        )
-        : null}
-
-      <div className="row border" key={index}>
-        <p className="col-3 mt-3">{ dateFormat(new Date(experiment.time.concat('Z')), 'UTC:yyyy-mm-dd  HH:MM:ss') }</p>
-        <p className="col-2 mt-3">{ experiment.scenario }</p>
-        <p className="col-2 mt-3">{ experiment.tester_name }</p>
-        <p className="col-2 my-auto">
-          <Link
-            to={{
-              pathname: '/dataset',
-              search: `?id=${experiment.unique_id}`
-            }}
-          >
-            Open
-          </Link>
-        </p>
-      </div>
-
-    </div>
+    <tr key={index}>
+      <td>{ dateFormat(new Date(experiment.time.concat('Z')), 'UTC:yyyy-mm-dd  HH:MM:ss') }</td>
+      <td>{ experiment.scenario }</td>
+      <td>{ experiment.tester_name }</td>
+      <td>
+        <Link
+          to={{
+            pathname: '/dataset',
+            search: `?id=${experiment.unique_id}`
+          }}
+        >
+          Open
+        </Link>
+      </td>
+    </tr>
   ));
 
+  function tableWithHeader() {
+    return (
+      <Table striped bordered size="sm">
+        <thead>
+          <tr>
+            <th><strong>Time (UTC)</strong></th>
+            <th><strong>Scenario</strong></th>
+            <th><strong>Tester</strong></th>
+            <th><strong>Examine dataset</strong></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {experimentsTable}
+        </tbody>
+
+      </Table>
+    );
+  }
+
   return (
-    <div style={{ maxWidth: '800px' }}>
-      {loadedFileNames ? experimentsTable : <Spinner animation="border" variant="primary" />}
-    </div>
+    <Container>
+      {loadedFileNames
+        ? tableWithHeader()
+        : <Spinner animation="border" variant="primary" size="xl" />}
+    </Container>
   );
 }
 
