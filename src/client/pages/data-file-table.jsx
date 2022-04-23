@@ -1,9 +1,8 @@
-import { saveAs } from 'file-saver';
 import React, { useEffect, useState } from 'react';
 import dateFormat from 'dateformat';
-import { Spinner } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import { downloadFile, getTableData } from '../api';
-import './data-file-table.css';
+import { Link } from 'react-router-dom';
 
 function DataFileTable() {
   const [loadedFileNames, setLoadedFileNames] = useState(false);
@@ -17,33 +16,6 @@ function DataFileTable() {
     };
     fetchData();
   }, []);
-
-  // TODO: move this function and buttons to separate page dedicated to examining specific dataset
-  const createFile = async (uniqueId, json = true) => {
-    const resp = await downloadFile(uniqueId);
-
-    const dataSet = resp?.data;
-    // eslint-disable-next-line no-underscore-dangle
-    delete dataSet._id;
-
-    const downloadName = uniqueId + (json ? '.json' : '.csv');
-    let fileToSave = null;
-
-    if (json) {
-      fileToSave = new Blob([JSON.stringify(dataSet, null, 4)], {
-        type: 'application/json'
-      });
-    } else {
-      // TODO: implement conversion of traces into table
-      const csv = null;
-      fileToSave = new Blob([csv], {
-        type: 'text/csv'
-      });
-    }
-
-    // Save the file
-    saveAs(fileToSave, downloadName);
-  };
 
   const experimentsTable = experiments.map((experiment, index) => (
     <div className="" key={index}>
@@ -62,12 +34,8 @@ function DataFileTable() {
               <strong>Tester</strong>
             </p>
             <p className="col-2 my-auto">
-              <i className="fa fa-download" />
-              <strong>Download</strong>
-            </p>
-            <p className="col-2 my-auto">
-              <i className="fa fa-external-link" />
-              <strong> Visualization</strong>
+              <i className="fa fa-open" />
+              <strong>Open</strong>
             </p>
           </div>
         )
@@ -78,18 +46,14 @@ function DataFileTable() {
         <p className="col-2 mt-3">{ experiment.scenario }</p>
         <p className="col-2 mt-3">{ experiment.tester_name }</p>
         <p className="col-2 my-auto">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => createFile(experiment.unique_id, true)}
+          <Link
+            to={{
+              pathname: '/dataset',
+              search: `?id=${experiment.unique_id}`
+            }}
           >
-            JSON
-          </button>
-        </p>
-        <p className="col-2 my-auto">
-          <a href={`http://ventmon.coslabs.com/breath_plot?raworks=https://data.respira.works/dbaccess/get-experiment-data?uniqueId=${experiment.unique_id}`}>
-            VentMon
-          </a>
+            Open
+          </Link>
         </p>
       </div>
 
@@ -97,7 +61,7 @@ function DataFileTable() {
   ));
 
   return (
-    <div className="container max-width-1000 mb-4">
+    <div style={{ maxWidth: '800px' }}>
       {loadedFileNames ? experimentsTable : <Spinner animation="border" variant="primary" />}
     </div>
   );
