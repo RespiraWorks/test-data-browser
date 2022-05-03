@@ -51,10 +51,13 @@ npm install
 You will need to configure a `.env` file to provide MongoDB credentials, something like this:
 
 ```dotenv
-MONGO_USERNAME=foo
-MONGO_PASSWORD=bar
-MONGO_HOSTNAME=coolname.gibberish.mongodb.net
+MONGO_URI=mongodb://user:password@localhost/?retryWrites=true&w=majority&authSource=admin
 ```
+or
+```dotenv
+MONGO_URI=mongodb+srv://user:password@foo.bar.mongodb.net/?retryWrites=true&w=majority
+```
+while replacing `user`, `password` and specifying correct host name.
 
 If you are using an external Mongo provider, remember to whitelist your IP.
 
