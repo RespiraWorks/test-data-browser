@@ -10,7 +10,8 @@ $theme-colors: (
 /* override bootstrap navbar colors */
 .navbar,
 .navbar-default {
-  background-image: linear-gradient(to bottom, #0065A1 0, #0065A1 100%) !important; /* override background image gradient w/ flat color */
+  /* override background image gradient w/ flat color */
+  background-image: linear-gradient(to bottom, #0065A1 0, #0065A1 100%) !important;
 }
 
 //.navbar-header {

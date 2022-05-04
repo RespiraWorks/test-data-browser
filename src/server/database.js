@@ -1,12 +1,9 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
+// See README for what to put in your `.env` file
 const {
-  MONGO_USERNAME,
-  MONGO_PASSWORD,
-  MONGO_HOSTNAME,
+  MONGO_URI
 } = process.env;
-
-const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}/myFirstDatabase?retryWrites=true&w=majority`;
 
 const databaseName = 'test-data';
 const collectionName = 'experiments';
@@ -17,7 +14,7 @@ let client; let connection;
 // TODO: use mongoose instead?
 // https://www.digitalocean.com/community/tutorials/containerizing-a-node-js-application-for-development-with-docker-compose
 const connectToDb = (function () {
-  client = new MongoClient(uri, {
+  client = new MongoClient(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     serverApi: ServerApiVersion.v1
