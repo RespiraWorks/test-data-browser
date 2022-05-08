@@ -1,4 +1,5 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { ServerApiVersion } = require('mongodb');
+const mongoose = require('mongoose');
 
 // See README for what to put in your `.env` file
 const {
@@ -10,29 +11,41 @@ const collectionName = 'experiments';
 
 let instance = null;
 
-// TODO: use mongoose instead?
 // https://www.digitalocean.com/community/tutorials/containerizing-a-node-js-application-for-development-with-docker-compose
 class DataBase {
   constructor() {
-    this.properties = {
+    this.mongoose_options = {
+      /* MongoDB options */
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverApi: ServerApiVersion.v1
+      serverApi: ServerApiVersion.v1,
+      /* mongoose options */
+      dbName: databaseName,
+      autoIndex: false, // Don't build indexes
+      maxPoolSize: 10, // Maintain up to 10 socket connections
+      serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+      family: 4 // Use IPv4, skip trying IPv6
     };
-    this.client = null;
+    // this.client = null;
     this.experiments_db = null;
   }
 
-  connect() {
-    this.client = new MongoClient(MONGO_URI, this.properties);
-    this.client.connect();
-    this.experiments_db = this.client.db(databaseName);
+  async connect() {
+    try {
+      await mongoose.connect(MONGO_URI, this.mongoose_options);
+    } catch (error) {
+      console.log(`Failed to connect to database: ${error}`);
+    }
+    mongoose.connection.on('error', (err) => {
+      console.log(`Database error: ${err}`);
+    });
+    this.experiments_db = mongoose.connection.db;
   }
 
   static getInstance() {
     if (!instance) {
       instance = new DataBase();
-      instance.connect();
     }
 
     return instance;

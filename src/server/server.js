@@ -1,16 +1,16 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const fileUpload = require('express-fileupload');
+const cors = require('cors');
+const { DataBase } = require('./database');
 
 const port = process.env.PORT || 8080;
 
-require('dotenv').config();
-
 const app = express();
 
-const cors = require('cors');
 // allow other domains to access this server
 app.use(cors());
 app.use(fileUpload({
@@ -31,6 +31,10 @@ app.use('/dbaccess', mongoRouter);
 
 app.get('*', (req, res) => res.sendFile(path.resolve('dist/index.html')));
 
-app.listen(port, () => console.log(`Listening on port ${port}!`));
+async function startServer() {
+  const singleton = DataBase.getInstance();
+  await singleton.connect();
+  app.listen(port, () => console.log(`Listening on port ${port}`));
+}
 
-module.exports = app;
+startServer().then(() => { console.log('Server is running.'); });
