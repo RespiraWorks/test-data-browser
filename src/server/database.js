@@ -8,65 +8,73 @@ const {
 const databaseName = 'test-data';
 const collectionName = 'experiments';
 
-let client; let connection;
+let instance = null;
 
-// TODO: follow proper OOP patterns, make this database a persistent object
 // TODO: use mongoose instead?
 // https://www.digitalocean.com/community/tutorials/containerizing-a-node-js-application-for-development-with-docker-compose
-const connectToDb = (function () {
-  client = new MongoClient(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverApi: ServerApiVersion.v1
-  });
-  connection = client.connect();
-}());
+class DataBase {
+  constructor() {
+    this.properties = {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverApi: ServerApiVersion.v1
+    };
+    this.client = null;
+    this.experiments_db = null;
+  }
 
-const testConnectToMongo = () => connection.then(() => {
-  const dbo = client.db(databaseName);
-  return dbo.collection(collectionName).findOne({}, (err, result) => {
-    if (err) throw err;
-    console.log(result);
-  });
-});
+  connect() {
+    this.client = new MongoClient(MONGO_URI, this.properties);
+    this.client.connect();
+    this.experiments_db = this.client.db(databaseName);
+  }
 
-// TODO: make querying more flexible, return various fields
-const grabMetadata = async () => connection.then(async () => {
-  const dbo = client.db(databaseName);
-  const retData = [];
-  await dbo.collection(collectionName).find().forEach(
-    (e) => {
-      const e2 = {
-        unique_id: e.unique_id,
-        time: e.start_time_utc,
-        tester_name: e.tester_name,
-        scenario: e.scenario.name
-      };
-      retData.push(e2);
+  static getInstance() {
+    if (!instance) {
+      instance = new DataBase();
+      instance.connect();
     }
-  );
-  return retData;
-});
 
-const getFullExperimentData = async (uniqueId) => connection.then(async () => {
-  const dbo = client.db(databaseName);
-  const query = { unique_id: uniqueId };
-  return dbo.collection(collectionName).findOne(query);
-});
+    return instance;
+  }
 
-const uploadExperiment = async (data, uniqueId) => connection.then(async () => {
-  const dbo = client.db(databaseName);
-  return dbo.collection(collectionName).insertOne({
-    unique_id: uniqueId,
-    ...data,
-  });
-});
+  async testConnectToMongo() {
+    return this.experiments_db.collection(collectionName).findOne({}, (err, result) => {
+      if (err) throw err;
+      console.log(result);
+    });
+  }
+
+  // TODO: make querying more flexible, return various fields
+  async grabMetadata() {
+    const retData = [];
+    await this.experiments_db.collection(collectionName).find().forEach(
+      (e) => {
+        const e2 = {
+          unique_id: e.unique_id,
+          time: e.start_time_utc,
+          tester_name: e.tester_name,
+          scenario: e.scenario.name
+        };
+        retData.push(e2);
+      }
+    );
+    return retData;
+  }
+
+  async getFullExperimentData(uniqueId) {
+    const query = { unique_id: uniqueId };
+    return this.experiments_db.collection(collectionName).findOne(query);
+  }
+
+  async uploadExperiment(data, uniqueId) {
+    return this.experiments_db.collection(collectionName).insertOne({
+      unique_id: uniqueId,
+      ...data,
+    });
+  }
+}
 
 module.exports = {
-  client,
-  connection,
-  testConnectToMongo,
-  grabMetadata,
-  getFullExperimentData,
-  uploadExperiment,
+  DataBase
 };
