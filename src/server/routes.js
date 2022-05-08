@@ -1,11 +1,11 @@
 const express = require('express');
 const path = require('path');
-const mongoConnection = require('./database');
+const { DataBase } = require('./database');
 
 const router = express.Router();
 
 router.get('/get-test-table-data', async (req, res) => {
-  const tableData = await mongoConnection.grabMetadata();
+  const tableData = await DataBase.getInstance().grabMetadata();
   res.send({
     msg: 'Worked!',
     tableData,
@@ -14,7 +14,7 @@ router.get('/get-test-table-data', async (req, res) => {
 
 router.get('/get-experiment-data', async (req, res) => {
   const { uniqueId } = req.query;
-  const dataSet = await mongoConnection.getFullExperimentData(uniqueId);
+  const dataSet = await DataBase.getInstance().getFullExperimentData(uniqueId);
   // TODO: does this need a failed/succeeded response?
   res.send({
     ...dataSet,
@@ -33,7 +33,7 @@ router.post('/upload-file', async (req, res) => {
       const filePath = path.parse(file.name);
       if (filePath.ext === '.json') {
         const jsonData = JSON.parse(file.data.toString());
-        const upload = await mongoConnection.uploadExperiment(jsonData, filePath.name);
+        const upload = await DataBase.getInstance().uploadExperiment(jsonData, filePath.name);
         console.log(`Ingested file: ${file.name}:`, file, upload);
         res.send({
           status: true,
