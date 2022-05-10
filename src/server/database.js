@@ -1,13 +1,11 @@
 const { ServerApiVersion } = require('mongodb');
 const mongoose = require('mongoose');
+const schemata = require('./user');
 
 // See README for what to put in your `.env` file
 const {
   MONGO_URI
 } = process.env;
-
-const databaseName = 'test-data';
-const collectionName = 'experiments';
 
 let instance = null;
 
@@ -20,27 +18,35 @@ class DataBase {
       useUnifiedTopology: true,
       serverApi: ServerApiVersion.v1,
       /* mongoose options */
-      dbName: databaseName,
+      dbName: null,
       autoIndex: false, // Don't build indexes
       maxPoolSize: 10, // Maintain up to 10 socket connections
       serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
       family: 4 // Use IPv4, skip trying IPv6
     };
-    // this.client = null;
-    this.experiments_db = null;
+    this.experiments_conn = null;
+    this.experiments = null;
+    this.user_model = null;
   }
 
   async connect() {
     try {
-      await mongoose.connect(MONGO_URI, this.mongoose_options);
+      this.mongoose_options.dbName = 'test-data';
+      this.experiments_conn = await mongoose.createConnection(
+        MONGO_URI,
+        this.mongoose_options
+      ).asPromise();
     } catch (error) {
       console.log(`Failed to connect to database: ${error}`);
     }
-    mongoose.connection.on('error', (err) => {
-      console.log(`Database error: ${err}`);
+    mongoose.connection.on('error', (error) => {
+      console.log(`Database error: ${error}`);
     });
-    this.experiments_db = mongoose.connection.db;
+    this.experiments = this.experiments_conn.db.collection('experiments');
+    this.user_model = this.experiments_conn.model('userData', schemata.User, 'userData');
+    console.log(`connection: ${this.experiments_conn}`);
+    console.log(`col: ${this.experiments}`);
   }
 
   static getInstance() {
@@ -52,7 +58,7 @@ class DataBase {
   }
 
   async testConnectToMongo() {
-    return this.experiments_db.collection(collectionName).findOne({}, (err, result) => {
+    return this.experiments.findOne({}, (err, result) => {
       if (err) throw err;
       console.log(result);
     });
@@ -61,7 +67,7 @@ class DataBase {
   // TODO: make querying more flexible, return various fields
   async grabMetadata() {
     const retData = [];
-    await this.experiments_db.collection(collectionName).find().forEach(
+    await this.experiments.find().forEach(
       (e) => {
         const e2 = {
           unique_id: e.unique_id,
@@ -77,11 +83,11 @@ class DataBase {
 
   async getFullExperimentData(uniqueId) {
     const query = { unique_id: uniqueId };
-    return this.experiments_db.collection(collectionName).findOne(query);
+    return this.experiments.findOne(query);
   }
 
   async uploadExperiment(data, uniqueId) {
-    return this.experiments_db.collection(collectionName).insertOne({
+    return this.experiments.insertOne({
       unique_id: uniqueId,
       ...data,
     });

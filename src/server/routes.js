@@ -5,6 +5,9 @@ const { DataBase } = require('./database');
 const router = express.Router();
 
 router.get('/get-test-table-data', async (req, res) => {
+  // DataBase.getInstance().user_model.register({ username: 'candy', active: false }, 'cane');
+  // DataBase.getInstance().user_model.register({ username: 'starbuck', active: false }, 'redeye');
+
   const tableData = await DataBase.getInstance().grabMetadata();
   res.send({
     msg: 'Worked!',
