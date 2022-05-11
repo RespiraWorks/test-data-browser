@@ -1,6 +1,6 @@
 const { ServerApiVersion } = require('mongodb');
 const mongoose = require('mongoose');
-const schemata = require('./user');
+const schemata = require('./models/user');
 
 // See README for what to put in your `.env` file
 const {
@@ -25,15 +25,15 @@ class DataBase {
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
       family: 4 // Use IPv4, skip trying IPv6
     };
-    this.experiments_conn = null;
-    this.experiments = null;
-    this.user_model = null;
+    this.experiments_connection = null;
+    this.experiments_collection = null;
+    this.UserModel = null;
   }
 
   async connect() {
     try {
       this.mongoose_options.dbName = 'test-data';
-      this.experiments_conn = await mongoose.createConnection(
+      this.experiments_connection = await mongoose.createConnection(
         MONGO_URI,
         this.mongoose_options
       ).asPromise();
@@ -43,10 +43,11 @@ class DataBase {
     mongoose.connection.on('error', (error) => {
       console.log(`Database error: ${error}`);
     });
-    this.experiments = this.experiments_conn.db.collection('experiments');
-    this.user_model = this.experiments_conn.model('userData', schemata.User, 'userData');
-    console.log(`connection: ${this.experiments_conn}`);
-    console.log(`col: ${this.experiments}`);
+    this.experiments_collection = this.experiments_connection.db.collection('experiments');
+    // (Name, schema, collection)
+    this.UserModel = this.experiments_connection.model('User', schemata.UserSchema, 'userData');
+    console.log(`connection: ${this.experiments_connection}`);
+    console.log(`col: ${this.experiments_collection}`);
   }
 
   static getInstance() {
@@ -58,7 +59,7 @@ class DataBase {
   }
 
   async testConnectToMongo() {
-    return this.experiments.findOne({}, (err, result) => {
+    return this.experiments_collection.findOne({}, (err, result) => {
       if (err) throw err;
       console.log(result);
     });
@@ -67,7 +68,7 @@ class DataBase {
   // TODO: make querying more flexible, return various fields
   async grabMetadata() {
     const retData = [];
-    await this.experiments.find().forEach(
+    await this.experiments_collection.find().forEach(
       (e) => {
         const e2 = {
           unique_id: e.unique_id,
@@ -83,11 +84,11 @@ class DataBase {
 
   async getFullExperimentData(uniqueId) {
     const query = { unique_id: uniqueId };
-    return this.experiments.findOne(query);
+    return this.experiments_collection.findOne(query);
   }
 
   async uploadExperiment(data, uniqueId) {
-    return this.experiments.insertOne({
+    return this.experiments_collection.insertOne({
       unique_id: uniqueId,
       ...data,
     });

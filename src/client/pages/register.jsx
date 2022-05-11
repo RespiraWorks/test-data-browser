@@ -4,7 +4,9 @@ import {
 import React, { useContext, useState } from 'react';
 import { UserContext } from '../context/UserContext';
 
-function Login() {
+function Register() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,11 +20,13 @@ function Login() {
 
     const genericErrorMessage = 'Something went wrong! Please try again later.';
 
-    fetch('/users/login', {
+    fetch('/users/signup', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: email, password }),
+      body: JSON.stringify({
+        firstName, lastName, username: email, password
+      }),
     })
       .then(async (response) => {
         setIsSubmitting(false);
@@ -31,13 +35,16 @@ function Login() {
             setError('Please fill all the fields correctly!');
           } else if (response.status === 401) {
             setError('Invalid email and password combination.');
+          } else if (response.status === 500) {
+            console.log(response);
+            const data = await response.json();
+            if (data.message) setError(data.message || genericErrorMessage);
           } else {
             setError(genericErrorMessage);
           }
         } else {
           const data = await response.json();
           setUserContext((oldValues) => ({ ...oldValues, token: data.token }));
-          console.log(`received context.token: ${userContext}`);
         }
       })
       .catch((error) => {
@@ -50,13 +57,29 @@ function Login() {
     <div>
       {error && <Callout intent="danger">{error}</Callout>}
       <form onSubmit={formSubmitHandler} className="auth-form">
+        <FormGroup label="First Name" labelFor="firstName">
+          <InputGroup
+            id="firstName"
+            placeholder="First Name"
+            onChange={(e) => setFirstName(e.target.value)}
+            value={firstName}
+          />
+        </FormGroup>
+        <FormGroup label="Last Name" labelFor="firstName">
+          <InputGroup
+            id="lastName"
+            placeholder="Last Name"
+            onChange={(e) => setLastName(e.target.value)}
+            value={lastName}
+          />
+        </FormGroup>
         <FormGroup label="Email" labelFor="email">
           <InputGroup
             id="email"
-            placeholder="Email"
             type="email"
-            value={email}
+            placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
+            value={email}
           />
         </FormGroup>
         <FormGroup label="Password" labelFor="password">
@@ -64,14 +87,14 @@ function Login() {
             id="password"
             placeholder="Password"
             type="password"
-            value={password}
             onChange={(e) => setPassword(e.target.value)}
+            value={password}
           />
         </FormGroup>
         <Button
           intent="primary"
           disabled={isSubmitting}
-          text={`${isSubmitting ? 'Signing In' : 'Sign In'}`}
+          text={`${isSubmitting ? 'Registering' : 'Register'}`}
           fill
           type="submit"
         />
@@ -80,4 +103,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
