@@ -1,6 +1,6 @@
 import {
-  Button, Callout, FormGroup, InputGroup
-} from '@blueprintjs/core';
+  Alert, Button, Container, Form,
+} from 'react-bootstrap';
 import React, { useContext, useState } from 'react';
 import { UserContext } from '../context/UserContext';
 
@@ -13,8 +13,12 @@ function Register() {
   const [error, setError] = useState('');
   const [userContext, setUserContext] = useContext(UserContext);
 
-  const formSubmitHandler = (e) => {
-    e.preventDefault();
+  function validateForm() {
+    return email.length > 0 && password.length > 0;
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
     setIsSubmitting(true);
     setError('');
 
@@ -47,59 +51,61 @@ function Register() {
           setUserContext((oldValues) => ({ ...oldValues, token: data.token }));
         }
       })
-      .catch((error) => {
+      .catch((caughtError) => {
         setIsSubmitting(false);
-        setError(genericErrorMessage);
+        setError(caughtError);
       });
-  };
+  }
 
   return (
-    <div>
-      {error && <Callout intent="danger">{error}</Callout>}
-      <form onSubmit={formSubmitHandler} className="auth-form">
-        <FormGroup label="First Name" labelFor="firstName">
-          <InputGroup
-            id="firstName"
+    <Container>
+      {error
+        && (
+          <Alert variant="danger">
+            <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+            <p>{error}</p>
+          </Alert>
+        )}
+      <Form onSubmit={handleSubmit}>
+        <Form.Group size="lg" controlId="firstName">
+          <Form.Label>First Name</Form.Label>
+          <Form.Control
             placeholder="First Name"
             onChange={(e) => setFirstName(e.target.value)}
             value={firstName}
           />
-        </FormGroup>
-        <FormGroup label="Last Name" labelFor="firstName">
-          <InputGroup
-            id="lastName"
+        </Form.Group>
+        <Form.Group size="lg" controlId="lastName">
+          <Form.Label>Last Name</Form.Label>
+          <Form.Control
             placeholder="Last Name"
             onChange={(e) => setLastName(e.target.value)}
             value={lastName}
           />
-        </FormGroup>
-        <FormGroup label="Email" labelFor="email">
-          <InputGroup
-            id="email"
+        </Form.Group>
+        <Form.Group size="lg" controlId="reg_email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
             type="email"
             placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
           />
-        </FormGroup>
-        <FormGroup label="Password" labelFor="password">
-          <InputGroup
-            id="password"
+        </Form.Group>
+        <Form.Group size="lg" controlId="reg_password">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
             placeholder="Password"
             type="password"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
           />
-        </FormGroup>
-        <Button
-          intent="primary"
-          disabled={isSubmitting}
-          text={`${isSubmitting ? 'Registering' : 'Register'}`}
-          fill
-          type="submit"
-        />
-      </form>
-    </div>
+        </Form.Group>
+        <Button block size="lg" type="submit" disabled={!validateForm() || isSubmitting}>
+          {isSubmitting ? 'Registering…' : 'Register'}
+        </Button>
+      </Form>
+    </Container>
   );
 }
 

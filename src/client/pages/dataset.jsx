@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   Button, Col, Container, Row, Spinner, Stack, Table,
-} from 'react-bootstrap'
+} from 'react-bootstrap';
 import dateFormat from 'dateformat';
 import { saveAs } from 'file-saver';
 import { downloadFile } from '../api';

@@ -1,7 +1,8 @@
 import {
-  Button, Callout, FormGroup, InputGroup
-} from '@blueprintjs/core';
+  Alert, Button, Container, Form,
+} from 'react-bootstrap';
 import React, { useContext, useState } from 'react';
+// import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 
 function Login() {
@@ -11,18 +12,51 @@ function Login() {
   const [error, setError] = useState('');
   const [userContext, setUserContext] = useContext(UserContext);
 
-  const formSubmitHandler = (e) => {
-    e.preventDefault();
+  function validateForm() {
+    return email.length > 0 && password.length > 0;
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
     setIsSubmitting(true);
     setError('');
 
+    const route = '/users/login';
+    const data = { username: email, password };
     const genericErrorMessage = 'Something went wrong! Please try again later.';
 
-    fetch('/users/login', {
+    // axios.post(route, data, {
+    //   headers: {
+    //     Accept: { 'Content-Type': 'application/json' },
+    //   },
+    //   withCredentials: true
+    // }).then((response) => {
+    //   setIsSubmitting(false);
+    //   const responseOK = response && response.status === 200 && response.statusText === 'OK';
+    //   if (!responseOK) {
+    //     if (response.status === 400) {
+    //       setError('Please fill all the fields correctly!');
+    //     } else if (response.status === 401) {
+    //       setError('Invalid email and password combination.');
+    //     } else {
+    //       setError(genericErrorMessage);
+    //     }
+    //   } else {
+    //     const responseData = response.data;
+    //     setUserContext((oldValues) => ({ ...oldValues, token: responseData.token }));
+    //   }
+    // }).catch((caughtError) => {
+    //   setIsSubmitting(false);
+    //   console.log('Axios error caught');
+    //   console.log(caughtError.toJSON());
+    //   setError(caughtError);
+    // });
+
+    fetch(route, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: email, password }),
+      body: JSON.stringify(data),
     })
       .then(async (response) => {
         setIsSubmitting(false);
@@ -35,48 +69,48 @@ function Login() {
             setError(genericErrorMessage);
           }
         } else {
-          const data = await response.json();
-          setUserContext((oldValues) => ({ ...oldValues, token: data.token }));
-          console.log(`received context.token: ${userContext}`);
+          const responseData = await response.json();
+          setUserContext((oldValues) => ({ ...oldValues, token: responseData.token }));
         }
       })
-      .catch((error) => {
+      .catch((caughtError) => {
         setIsSubmitting(false);
-        setError(genericErrorMessage);
+        setError(caughtError);
       });
-  };
+  }
 
   return (
-    <div>
-      {error && <Callout intent="danger">{error}</Callout>}
-      <form onSubmit={formSubmitHandler} className="auth-form">
-        <FormGroup label="Email" labelFor="email">
-          <InputGroup
-            id="email"
-            placeholder="Email"
+    <Container>
+      {error
+        && (
+        <Alert variant="danger">
+          <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+          <p>{error}</p>
+        </Alert>
+        )}
+      <Form onSubmit={handleSubmit}>
+        <Form.Group size="lg" controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            autoFocus
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-        </FormGroup>
-        <FormGroup label="Password" labelFor="password">
-          <InputGroup
-            id="password"
-            placeholder="Password"
+        </Form.Group>
+        <Form.Group size="lg" controlId="password">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-        </FormGroup>
-        <Button
-          intent="primary"
-          disabled={isSubmitting}
-          text={`${isSubmitting ? 'Signing In' : 'Sign In'}`}
-          fill
-          type="submit"
-        />
-      </form>
-    </div>
+        </Form.Group>
+        <Button block size="lg" type="submit" disabled={!validateForm() || isSubmitting}>
+          {isSubmitting ? 'Signing in…' : 'Sign In'}
+        </Button>
+      </Form>
+    </Container>
   );
 }
 
