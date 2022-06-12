@@ -18,6 +18,9 @@ function MyNavbar() {
           <Nav.Link href="/upload-file">
             <p className="fs-4 mx-lg-3 pt-lg-2">UPLOAD</p>
           </Nav.Link>
+          <Nav.Link href="/login">
+            <p className="fs-4 mx-lg-3 pt-lg-2">USER</p>
+          </Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
